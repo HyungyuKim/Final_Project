@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="il.user">
+ 
+ 	<!-- 회원가입 -->
+   <insert id="userInsert" parameterType="il.user.model.UserDTO">
+      insert into User_Table values(User_Table_user_idx.nextval,#{user_name},#{id},
+      #{pw},#{nickname},#{birth},#{postal_code},#{road_addr},
+      #{branch_addr},#{detailed_addr},#{noted},'',0,#{phone},#{email},'',sysdate)
+   </insert>
+   
+   <!-- id중복검사 -->
+   <select id="idCheck" parameterType="String" resultType="int">
+      select count(id) from User_Table where id=#{id}
+   </select>
+   
+   <!-- 닉네임중복검사 -->
+   <select id="nicknameCheck" parameterType="String" resultType="int">
+      select count(nickname) from User_Table where nickname=#{nickname}
+   </select>
+
+	<!-- id,pw 검증 -->
+	<select id="loginCheck" parameterType="String" resultType="String">
+		select pw from User_Table where id=#{id}
+	</select>
+	
+	<!-- 로그인시 유저이름 가져오기 -->
+	<select id="getUserInfo" parameterType="String" resultType="String">
+		select user_name from User_Table where id=#{id}
+	</select>
+	
+	<!-- 이메일 인증 유무 판별 -->
+	<select id="emailCheck" parameterType="String" resultType="String">
+		select emailCheck from User_Table where id=#{id}
+	</select>
+	
+	<!-- 이메일인증 관련 -->
+	<insert id="GetKey" parameterType = "hashmap">
+      update User_Table set emailCheck = #{emailCheck} where id = #{id}
+   </insert>
+   
+   <!-- 이메일인증 관련 -->
+   <update id = "alter_userKey" parameterType="hashmap">
+      update User_Table set emailCheck = 'Y' where id=#{id} and emailCheck = #{emailCheck}
+   </update>
+   
+   <select id="userType" parameterType="String" resultType="int">
+   		select user_type from User_Table where id=#{id}
+   </select>
+</mapper>
